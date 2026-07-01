@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLEX, Explained — Vodafone Qatar Flex Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600;6..72,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Special+Elite&family=Amiri:wght@400;700&family=Cairo:wght@400;500;600;700&family=Noto+Nastaliq+Urdu:wght@400;600;700&family=Noto+Sans+Malayalam:wght@400;500;700&family=Noto+Serif+Malayalam:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F5F1E6;
+  --paper-2:#EFE9D9;
+  --ink:#1C1A16;
+  --muted:#6E6856;
+  --line:#D8D0B8;
+  --vf-red:#E60000;
+  --vf-red-deep:#A30000;
+  --stamp-green:#1F6F50;
+  --stamp-brick:#A8402F;
+  --gold:#B9892E;
+  --ledger-dark:#211F1A;
+  --radius:2px;
+  --maxw:920px;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+body[data-lang="ar"]{font-family:'Cairo',sans-serif;}
+body[data-lang="ur"]{font-family:'Noto Nastaliq Urdu',serif; line-height:2.1;}
+body[data-lang="ml"]{font-family:'Noto Sans Malayalam','Inter',sans-serif;}
+
+h1,h2,h3{font-family:'Newsreader',serif; font-weight:600; letter-spacing:-0.01em; margin:0;}
+body[data-lang="ar"] h1, body[data-lang="ar"] h2, body[data-lang="ar"] h3{font-family:'Amiri',serif; font-weight:700;}
+body[data-lang="ur"] h1, body[data-lang="ur"] h2, body[data-lang="ur"] h3{font-family:'Noto Nastaliq Urdu',serif; font-weight:600;}
+body[data-lang="ml"] h1, body[data-lang="ml"] h2, body[data-lang="ml"] h3{font-family:'Noto Serif Malayalam',serif; font-weight:600;}
+
+.mono{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+.eyebrow{
+  font-family:'Special Elite',monospace;
+  text-transform:uppercase;
+  letter-spacing:.12em;
+  font-size:.72rem;
+  color:var(--vf-red-deep);
+}
+body[data-lang="ar"] .eyebrow, body[data-lang="ur"] .eyebrow, body[data-lang="ml"] .eyebrow{font-family:inherit; letter-spacing:0;}
+
+a{color:var(--vf-red-deep);}
+
+.wrap{max-width:var(--maxw); margin:0 auto; padding:0 22px;}
+
+.topbar{
+  position:sticky; top:0; z-index:50;
+  background:var(--paper); border-bottom:1px solid var(--ink);
+}
+.topbar-inner{
+  max-width:var(--maxw); margin:0 auto; padding:14px 22px;
+  display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap;
+}
+.brandmark{display:flex; align-items:center; gap:10px;}
+.brandmark .box{
+  width:34px;height:34px; border:1.5px solid var(--ink); display:flex; align-items:center; justify-content:center;
+  font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:.78rem; flex:none;
+}
+.brandmark .name{font-family:'Newsreader',serif; font-weight:600; font-size:1.05rem;}
+.brandmark .sub{font-size:.68rem; color:var(--muted); font-family:'IBM Plex Mono',monospace; letter-spacing:.04em;}
+
+.langswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.langswitch button{
+  font-family:'IBM Plex Mono',monospace; font-size:.75rem; padding:6px 10px;
+  background:transparent; border:1px solid var(--line); color:var(--ink); cursor:pointer; border-radius:var(--radius);
+}
+.langswitch button.active{background:var(--ink); color:var(--paper); border-color:var(--ink);}
+
+.hero{padding:54px 0 30px; border-bottom:1px solid var(--line);}
+.hero h1{font-size:2.5rem; line-height:1.1; max-width:14ch;}
+body[data-lang="ar"] .hero h1, body[data-lang="ur"] .hero h1{max-width:none;}
+.hero .lede{margin-top:16px; font-size:1.08rem; max-width:54ch; color:#332f28;}
+.hero .ctas{margin-top:26px; display:flex; gap:12px; flex-wrap:wrap;}
+.btn{
+  font-family:'IBM Plex Mono',monospace; font-size:.82rem; padding:11px 18px; border-radius:var(--radius);
+  text-decoration:none; display:inline-block; cursor:pointer; border:1px solid var(--ink);
+}
+.btn-primary{background:var(--vf-red); border-color:var(--vf-red); color:#fff;}
+.btn-ghost{background:transparent; color:var(--ink);}
+
+.ticker{
+  margin-top:38px; background:var(--ledger-dark); color:var(--paper);
+  border:1px solid var(--ink); padding:18px 20px; border-radius:var(--radius);
+  display:flex; align-items:center; gap:18px; overflow:hidden;
+}
+.ticker .tlabel{font-family:'Special Elite',monospace; font-size:.68rem; color:#C9C2AA; text-transform:uppercase; letter-spacing:.1em; flex:none;}
+.ticker .tval{font-family:'IBM Plex Mono',monospace; font-size:1.5rem; font-weight:600; letter-spacing:.02em; transition:opacity .35s ease;}
+
+section{padding:48px 0; border-bottom:1px solid var(--line);}
+.sectionhead{margin-bottom:26px;}
+.sectionhead h2{font-size:1.6rem; margin-top:8px;}
+.sectionhead p{color:var(--muted); margin-top:10px; max-width:60ch;}
+
+.factgrid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+@media(max-width:680px){.factgrid{grid-template-columns:1fr;}}
+.factcard{
+  border:1px solid var(--ink); padding:18px; background:var(--paper-2); border-radius:var(--radius);
+  position:relative;
+}
+.factcard .fnum{font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--vf-red-deep); margin-bottom:8px; display:block;}
+.factcard h3{font-size:1.05rem; margin-bottom:8px;}
+.factcard p{margin:0; font-size:.93rem; color:#3a352b;}
+
+.tablewrap{overflow-x:auto; border:1px solid var(--ink); border-radius:var(--radius);}
+table{width:100%; border-collapse:collapse; min-width:640px;}
+thead th{
+  text-align:start; font-family:'IBM Plex Mono',monospace; font-size:.72rem; text-transform:uppercase; letter-spacing:.06em;
+  background:var(--ink); color:var(--paper); padding:10px 14px;
+}
+tbody td{padding:10px 14px; border-top:1px solid var(--line); font-size:.92rem;}
+tbody tr:nth-child(even){background:var(--paper-2);}
+td.num, th.num{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums;}
+.stamp{
+  display:inline-block; font-family:'Special Elite',monospace; font-size:.68rem; text-transform:uppercase;
+  border:1.5px solid; border-radius:3px; padding:2px 7px; letter-spacing:.06em; transform:rotate(-2deg);
+}
+.stamp.yes{color:var(--stamp-green); border-color:var(--stamp-green);}
+.stamp.no{color:var(--stamp-brick); border-color:var(--stamp-brick);}
+.tablefoot{font-size:.82rem; color:var(--muted); margin-top:10px;}
+
+.calc{
+  border:1.5px solid var(--ink); background:var(--paper-2); border-radius:var(--radius); padding:24px;
+}
+.calc h3{font-size:1.05rem; margin-bottom:14px;}
+.steplabel{font-family:'IBM Plex Mono',monospace; font-size:.72rem; color:var(--vf-red-deep); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; display:block;}
+
+.chiprow{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:6px;}
+.chip{
+  font-family:'IBM Plex Mono',monospace; font-size:.82rem; padding:9px 13px; border:1px solid var(--ink);
+  background:#fff; cursor:pointer; border-radius:var(--radius); text-align:center;
+}
+.chip.selected{background:var(--vf-red); color:#fff; border-color:var(--vf-red);}
+.chip small{display:block; font-size:.68rem; color:inherit; opacity:.8;}
+
+.customrow{margin-top:12px; display:flex; align-items:center; gap:10px; flex-wrap:wrap;}
+.customrow label{font-size:.86rem; color:var(--muted);}
+input[type="number"], select{
+  font-family:'IBM Plex Mono',monospace; font-size:.9rem; padding:8px 10px; border:1px solid var(--ink);
+  border-radius:var(--radius); background:#fff; color:var(--ink); width:110px;
+}
+select{width:auto; min-width:150px;}
+
+.usagegrid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:18px;}
+@media(max-width:680px){.usagegrid{grid-template-columns:1fr;}}
+.field{display:flex; flex-direction:column; gap:6px;}
+.field label{font-size:.86rem;}
+.field .hint{font-size:.74rem; color:var(--muted);}
+.field input{width:100%;}
+
+.intlrow{display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:8px;}
+.intlrow select{flex:1; min-width:140px;}
+.intlrow input{width:90px;}
+.addrow{
+  font-family:'IBM Plex Mono',monospace; font-size:.78rem; background:transparent; border:1px dashed var(--ink);
+  padding:7px 12px; cursor:pointer; border-radius:var(--radius); color:var(--ink);
+}
+
+.ledgerout{
+  margin-top:24px; border-top:2px solid var(--ink); padding-top:18px;
+}
+.ledgerline{display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px dotted var(--line); font-size:.92rem; gap:14px;}
+.ledgerline .v{font-family:'IBM Plex Mono',monospace; font-variant-numeric:tabular-nums; flex:none;}
+.ledgerline.total{font-weight:700; font-size:1.05rem; border-bottom:none; border-top:1px solid var(--ink); margin-top:4px; padding-top:12px;}
+.verdict{
+  margin-top:16px; padding:14px 16px; border-radius:var(--radius); font-size:.94rem; border:1.5px solid;
+}
+.verdict.ok{background:#EAF2EC; border-color:var(--stamp-green); color:#16513A;}
+.verdict.bad{background:#F7E9E6; border-color:var(--stamp-brick); color:#7A2A1E;}
+
+.intltable td:first-child{font-weight:600;}
+
+.faqitem{border-bottom:1px solid var(--line);}
+.faqq{
+  width:100%; text-align:start; background:none; border:none; padding:16px 0; cursor:pointer;
+  display:flex; justify-content:space-between; gap:14px; align-items:center; font-size:1rem; font-weight:600; color:var(--ink);
+  font-family:inherit;
+}
+.faqq .plus{font-family:'IBM Plex Mono',monospace; color:var(--vf-red-deep); flex:none;}
+.faqa{max-height:0; overflow:hidden; transition:max-height .25s ease; font-size:.93rem; color:#3a352b;}
+.faqa .inner{padding-bottom:16px;}
+.faqitem.open .faqa{max-height:400px;}
+
+footer{padding:36px 0 60px;}
+footer p{font-size:.78rem; color:var(--muted); max-width:62ch;}
+footer .seal{
+  font-family:'Special Elite',monospace; font-size:.7rem; border:1px solid var(--muted); display:inline-block;
+  padding:5px 10px; border-radius:3px; color:var(--muted); margin-bottom:14px; transform:rotate(-1deg);
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{outline:2px solid var(--vf-red); outline-offset:2px;}
+
+@media(max-width:560px){
+  .hero h1{font-size:1.9rem;}
+  .ticker{flex-wrap:wrap;}
+}
+</style>
+</head>
+<body data-lang="en">
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brandmark">
+      <div class="box">QR⇄F</div>
+      <div>
+        <div class="name" data-i18n="brand_name">FLEX, Explained</div>
+        <div class="sub" data-i18n="brand_sub">VODAFONE QATAR · UNOFFICIAL GUIDE</div>
+      </div>
+    </div>
+    <div class="langswitch" role="group" aria-label="Language">
+      <button data-lang-btn="en" class="active">English</button>
+      <button data-lang-btn="ur">اردو</button>
+      <button data-lang-btn="ml">മലയാളം</button>
+      <button data-lang-btn="ar">العربية</button>
+    </div>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <section class="hero">
+    <span class="eyebrow" data-i18n="hero_eyebrow">PREPAID · QATAR ONLY</span>
+    <h1 data-i18n="hero_title">FLEX is just an exchange rate. Here's how to read it.</h1>
+    <p class="lede" data-i18n="hero_lede">You pay Riyals, Vodafone gives you "Flex" points, and Flex points buy minutes, SMS or data — at different rates depending on what you spend them on. This page shows you the real rate card and lets you work out exactly what your recharge gets you.</p>
+    <div class="ctas">
+      <a href="#calculator" class="btn btn-primary" data-i18n="hero_cta1">Open the calculator</a>
+      <a href="#facts" class="btn btn-ghost" data-i18n="hero_cta2">See what confuses people</a>
+    </div>
+    <div class="ticker" aria-hidden="true">
+      <span class="tlabel" data-i18n="ticker_label">LIVE RATE BOARD</span>
+      <span class="tval mono" id="tickerVal">QR 20 ⇄ 150 FLEX</span>
+    </div>
+  </section>
+
+  <section id="facts">
+    <div class="sectionhead">
+      <span class="eyebrow" data-i18n="facts_eyebrow">THE CONFUSING PARTS</span>
+      <h2 data-i18n="facts_title">Five things almost everyone gets wrong</h2>
+      <p data-i18n="facts_sub">Straight from Vodafone Qatar's official tariff document (effective 16 Feb 2025).</p>
+    </div>
+    <div class="factgrid">
+      <div class="factcard">
+        <span class="fnum">01</span>
+        <h3 data-i18n="fact1_h">Three balances, one strict order</h3>
+        <p data-i18n="fact1_p">If you have Data, Flex and Credit (Riyal) balance at the same time, Vodafone always spends them in this order: Data first, then Flex, then Credit. You can't choose.</p>
+      </div>
+      <div class="factcard">
+        <span class="fnum">02</span>
+        <h3 data-i18n="fact2_h">Minutes and SMS are simple. Data isn't.</h3>
+        <p data-i18n="fact2_p">1 local minute = 1 Flex. 1 SMS, local or international, same price, = 1 Flex. But data and international calls cost a different number of Flex per unit — see the calculator below.</p>
+      </div>
+      <div class="factcard">
+        <span class="fnum">03</span>
+        <h3 data-i18n="fact3_h">QR 10 and QR 20 don't carry forward</h3>
+        <p data-i18n="fact3_p">Every other Flex recharge, QR15 and up, lets you carry unused Flex into a new period if you recharge with Flex again before it expires. QR10 and QR20 Flex always expire, no carry forward.</p>
+      </div>
+      <div class="factcard">
+        <span class="fnum">04</span>
+        <h3 data-i18n="fact4_h">Flex stops working the moment you leave Qatar</h3>
+        <p data-i18n="fact4_p">Flex is strictly local. The instant you're roaming abroad, your Flex balance can't be used, you'll need a roaming pack instead.</p>
+      </div>
+      <div class="factcard">
+        <span class="fnum">05</span>
+        <h3 data-i18n="fact5_h">The dial code you use changes everything</h3>
+        <p data-i18n="fact5_p">Dial *777*PIN# and choose "Flex" to get Flex points. Dial *127*PIN# instead and you get the card's normal credit or data benefit, no Flex at all. Same card, two completely different outcomes.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="packs">
+    <div class="sectionhead">
+      <span class="eyebrow" data-i18n="packs_eyebrow">OFFICIAL RATE CARD</span>
+      <h2 data-i18n="packs_title">Every Flex recharge, in one table</h2>
+      <p data-i18n="packs_sub">Dial *777*PIN# after recharging with any of these amounts, then choose the Flex option.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-i18n="th_price">Recharge (QR)</th>
+            <th class="num" data-i18n="th_flex">Flex points</th>
+            <th data-i18n="th_validity">Valid for</th>
+            <th data-i18n="th_carry">Carries forward?</th>
+          </tr>
+        </thead>
+        <tbody id="packTableBody"></tbody>
+      </table>
+    </div>
+    <p class="tablefoot" data-i18n="packs_foot">QR 20 can also be activated instantly by dialling *200*771# (renews weekly while you have balance). Deactivate any Flex plan with *250*771# or *100#.</p>
+  </section>
+
+  <section id="calculator">
+    <div class="sectionhead">
+      <span class="eyebrow" data-i18n="calc_eyebrow">DO THE MATH</span>
+      <h2 data-i18n="calc_title">Will your Flex actually cover what you need?</h2>
+      <p data-i18n="calc_sub">Pick a recharge, tell us roughly what you use in a month, and we'll show you the Flex math, and whether you're short.</p>
+    </div>
+
+    <div class="calc">
+      <span class="steplabel" data-i18n="calc_step1">STEP 1 — Choose your recharge</span>
+      <div class="chiprow" id="packChips"></div>
+      <div class="customrow">
+        <label><input type="checkbox" id="customToggle"> <span data-i18n="calc_customlabel">I already know my Flex balance:</span></label>
+        <input type="number" id="customFlexInput" min="0" placeholder="0" disabled>
+      </div>
+
+      <div style="margin-top:26px;">
+        <span class="steplabel" data-i18n="calc_step2">STEP 2 — What will you use it on?</span>
+        <div class="usagegrid">
+          <div class="field">
+            <label data-i18n="calc_minutes_label">Local minutes / month</label>
+            <input type="number" id="inMinutes" min="0" value="0">
+            <span class="hint" data-i18n="calc_minutes_hint">1 Flex per minute</span>
+          </div>
+          <div class="field">
+            <label data-i18n="calc_sms_label">SMS / month (local + international)</label>
+            <input type="number" id="inSms" min="0" value="0">
+            <span class="hint" data-i18n="calc_sms_hint">1 Flex per SMS, same rate for local or international</span>
+          </div>
+          <div class="field">
+            <label data-i18n="calc_data_label">Data / month (GB)</label>
+            <input type="number" id="inData" min="0" step="0.1" value="0">
+            <span class="hint" data-i18n="calc_data_hint">≈145 Flex per GB, estimate only, confirm in the My Vodafone app</span>
+          </div>
+          <div class="field">
+            <label data-i18n="calc_intl_label">International calls</label>
+            <div id="intlRows"></div>
+            <button type="button" class="addrow" id="addIntlRow" data-i18n="calc_addcountry">+ Add another country</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ledgerout">
+        <span class="steplabel" data-i18n="calc_step3">STEP 3 — Your Flex ledger</span>
+        <div class="ledgerline"><span data-i18n="ledger_balance">Flex balance</span><span class="v" id="outBalance">0</span></div>
+        <div class="ledgerline"><span data-i18n="ledger_minutes">Local minutes cost</span><span class="v" id="outMinCost">0</span></div>
+        <div class="ledgerline"><span data-i18n="ledger_sms">SMS cost</span><span class="v" id="outSmsCost">0</span></div>
+        <div class="ledgerline"><span data-i18n="ledger_data">Data cost (estimate)</span><span class="v" id="outDataCost">0</span></div>
+        <div class="ledgerline"><span data-i18n="ledger_intl">International calls cost</span><span class="v" id="outIntlCost">0</span></div>
+        <div class="ledgerline total"><span data-i18n="ledger_needed">Total Flex needed</span><span class="v" id="outNeeded">0</span></div>
+        <div id="verdictBox"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="international">
+    <div class="sectionhead">
+      <span class="eyebrow" data-i18n="intl_eyebrow">CALLING ABROAD</span>
+      <h2 data-i18n="intl_title">What 1 minute costs in Flex, by country</h2>
+      <p data-i18n="intl_sub">Local SMS and international SMS both cost 1 Flex. International calls are priced per minute, grouped by country below.</p>
+    </div>
+    <div class="tablewrap">
+      <table class="intltable">
+        <thead><tr><th data-i18n="th_group">Flex / minute</th><th data-i18n="th_countries">Countries (examples)</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td data-i18n="intl_g1">India, Bangladesh</td></tr>
+          <tr><td class="num">3</td><td data-i18n="intl_g3">Pakistan, Philippines</td></tr>
+          <tr><td class="num">5</td><td data-i18n="intl_g5">Bahrain, Egypt, Indonesia, Kenya, Kuwait, Malaysia, Nepal, Nigeria, Oman, Saudi Arabia, Sri Lanka, Thailand, UAE, UK, USA, France, Spain</td></tr>
+          <tr><td class="num">6</td><td data-i18n="intl_g6">Turkey</td></tr>
+          <tr><td class="num">10</td><td data-i18n="intl_g10">Australia, Canada, Germany, Italy, Japan, Jordan, Lebanon, China, Hong Kong, Ireland, Netherlands, New Zealand, Russia, Singapore, South Korea, South Africa, and more</td></tr>
+          <tr><td class="num">15</td><td data-i18n="intl_g15">Argentina, Belgium, Iceland, Poland, Ukraine, Bulgaria, Croatia, and more</td></tr>
+          <tr><td class="num">30</td><td data-i18n="intl_g30">Algeria, Libya, Tunisia, Jamaica, Bahamas, and more</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="tablefoot" data-i18n="intl_foot">Full country-by-country list is on vodafone.qa, this table covers the destinations Qatar residents call most.</p>
+  </section>
+
+  <section id="faq">
+    <div class="sectionhead">
+      <span class="eyebrow" data-i18n="faq_eyebrow">STRAIGHT ANSWERS</span>
+      <h2 data-i18n="faq_title">Frequently asked questions</h2>
+    </div>
+    <div id="faqList"></div>
+  </section>
+
+  <footer>
+    <span class="seal" data-i18n="footer_seal">UNOFFICIAL · NOT AFFILIATED WITH VODAFONE QATAR</span>
+    <p data-i18n="footer_p1">Built from Vodafone Qatar's official Prepaid Tariff Document (effective 16 February 2025, version 72) and Vodafone Qatar's published Flex Prepaid FAQ. Flex amounts, prices, validity periods and country rates can change at any time.</p>
+    <p data-i18n="footer_p2">Always confirm your exact Flex balance and current rates by dialling *130#, checking the My Vodafone app, or visiting vodafone.qa before you rely on these numbers for an important call.</p>
+  </footer>
+
+</main>
+
+<script>
+const I18N = {
+en: {
+  brand_name:"FLEX, Explained", brand_sub:"VODAFONE QATAR · UNOFFICIAL GUIDE",
+  hero_eyebrow:"PREPAID · QATAR ONLY",
+  hero_title:"FLEX is just an exchange rate. Here's how to read it.",
+  hero_lede:"You pay Riyals, Vodafone gives you \u201cFlex\u201d points, and Flex points buy minutes, SMS or data \u2014 at different rates depending on what you spend them on. This page shows you the real rate card and lets you work out exactly what your recharge gets you.",
+  hero_cta1:"Open the calculator", hero_cta2:"See what confuses people", ticker_label:"LIVE RATE BOARD",
+  facts_eyebrow:"THE CONFUSING PARTS", facts_title:"Five things almost everyone gets wrong",
+  facts_sub:"Straight from Vodafone Qatar's official tariff document (effective 16 Feb 2025).",
+  fact1_h:"Three balances, one strict order", fact1_p:"If you have Data, Flex and Credit (Riyal) balance at the same time, Vodafone always spends them in this order: Data first, then Flex, then Credit. You can't choose.",
+  fact2_h:"Minutes and SMS are simple. Data isn't.", fact2_p:"1 local minute = 1 Flex. 1 SMS, local or international, same price, = 1 Flex. But data and international calls cost a different number of Flex per unit \u2014 see the calculator below.",
+  fact3_h:"QR 10 and QR 20 don't carry forward", fact3_p:"Every other Flex recharge, QR15 and up, lets you carry unused Flex into a new period if you recharge with Flex again before it expires. QR10 and QR20 Flex always expire, no carry forward.",
+  fact4_h:"Flex stops working the moment you leave Qatar", fact4_p:"Flex is strictly local. The instant you're roaming abroad, your Flex balance can't be used, you'll need a roaming pack instead.",
+  fact5_h:"The dial code you use changes everything", fact5_p:"Dial *777*PIN# and choose \u201cFlex\u201d to get Flex points. Dial *127*PIN# instead and you get the card's normal credit or data benefit, no Flex at all. Same card, two completely different outcomes.",
+  packs_eyebrow:"OFFICIAL RATE CARD", packs_title:"Every Flex recharge, in one table",
+  packs_sub:"Dial *777*PIN# after recharging with any of these amounts, then choose the Flex option.",
+  th_price:"Recharge (QR)", th_flex:"Flex points", th_validity:"Valid for", th_carry:"Carries forward?",
+  packs_foot:"QR 20 can also be activated instantly by dialling *200*771# (renews weekly while you have balance). Deactivate any Flex plan with *250*771# or *100#.",
+  calc_eyebrow:"DO THE MATH", calc_title:"Will your Flex actually cover what you need?",
+  calc_sub:"Pick a recharge, tell us roughly what you use in a month, and we'll show you the Flex math, and whether you're short.",
+  calc_step1:"STEP 1 \u2014 Choose your recharge", calc_customlabel:"I already know my Flex balance:",
+  calc_step2:"STEP 2 \u2014 What will you use it on?",
+  calc_minutes_label:"Local minutes / month", calc_minutes_hint:"1 Flex per minute",
+  calc_sms_label:"SMS / month (local + international)", calc_sms_hint:"1 Flex per SMS, same rate for local or international",
+  calc_data_label:"Data / month (GB)", calc_data_hint:"\u2248145 Flex per GB, estimate only, confirm in the My Vodafone app",
+  calc_intl_label:"International calls", calc_addcountry:"+ Add another country", calc_step3:"STEP 3 \u2014 Your Flex ledger",
+  ledger_balance:"Flex balance", ledger_minutes:"Local minutes cost", ledger_sms:"SMS cost", ledger_data:"Data cost (estimate)",
+  ledger_intl:"International calls cost", ledger_needed:"Total Flex needed",
+  pick_prompt:"Pick a recharge above, or enter a known Flex balance, to see your ledger.",
+  verdict_ok:"You're covered. {left} Flex left over after this usage.",
+  verdict_bad:"You're short by {short} Flex. The QR {pack} recharge ({flex} Flex) would cover this instead.",
+  verdict_bad_none:"Your monthly usage needs more Flex than any single recharge provides. Consider combining two recharges, or switching to a Combo or Data plan instead of Flex.",
+  intl_eyebrow:"CALLING ABROAD", intl_title:"What 1 minute costs in Flex, by country",
+  intl_sub:"Local SMS and international SMS both cost 1 Flex. International calls are priced per minute, grouped by country below.",
+  th_group:"Flex / minute", th_countries:"Countries (examples)",
+  intl_g1:"India, Bangladesh", intl_g3:"Pakistan, Philippines",
+  intl_g5:"Bahrain, Egypt, Indonesia, Kenya, Kuwait, Malaysia, Nepal, Nigeria, Oman, Saudi Arabia, Sri Lanka, Thailand, UAE, UK, USA, France, Spain",
+  intl_g6:"Turkey",
+  intl_g10:"Australia, Canada, Germany, Italy, Japan, Jordan, Lebanon, China, Hong Kong, Ireland, Netherlands, New Zealand, Russia, Singapore, South Korea, South Africa, and more",
+  intl_g15:"Argentina, Belgium, Iceland, Poland, Ukraine, Bulgaria, Croatia, and more",
+  intl_g30:"Algeria, Libya, Tunisia, Jamaica, Bahamas, and more",
+  intl_foot:"Full country-by-country list is on vodafone.qa, this table covers the destinations Qatar residents call most.",
+  faq_eyebrow:"STRAIGHT ANSWERS", faq_title:"Frequently asked questions",
+  footer_seal:"UNOFFICIAL · NOT AFFILIATED WITH VODAFONE QATAR",
+  footer_p1:"Built from Vodafone Qatar's official Prepaid Tariff Document (effective 16 February 2025, version 72) and Vodafone Qatar's published Flex Prepaid FAQ. Flex amounts, prices, validity periods and country rates can change at any time.",
+  footer_p2:"Always confirm your exact Flex balance and current rates by dialling *130#, checking the My Vodafone app, or visiting vodafone.qa before you rely on these numbers for an important call.",
+  val_3:"3 days", val_5act:"Activation day + 5 days", val_7:"7 days", val_14:"14 days", val_28:"28 days",
+  carry_yes:"YES", carry_no:"NO",
+  c_india:"India", c_bangladesh:"Bangladesh", c_pakistan:"Pakistan", c_philippines:"Philippines", c_nepal:"Nepal",
+  c_srilanka:"Sri Lanka", c_egypt:"Egypt", c_saudi:"Saudi Arabia", c_uae:"UAE", c_kuwait:"Kuwait", c_bahrain:"Bahrain",
+  c_thailand:"Thailand", c_uk:"UK", c_usa:"USA", c_turkey:"Turkey", c_jordan:"Jordan", c_lebanon:"Lebanon",
+  c_canada:"Canada", c_australia:"Australia", c_germany:"Germany", c_other:"Other country (approx.)",
+  intlRemoveLabel:"Remove",
+  faq_q1:"How do I buy Flex?", faq_a1:"Recharge with any of QR 15, 40, 50, 65, 80, 100, 120, 150, 200, 300 or 500 and dial *777*PIN# from your phone, then choose the Flex option. Or just dial *200*771# to get 150 Flex for QR20, valid 7 days.",
+  faq_q2:"What happens if I dial *127*PIN# instead of *777*PIN#?", faq_a2:"You get the card's normal, non-Flex benefit instead, for example a QR55 card gives QR55 straight credit, not Flex.",
+  faq_q3:"What if I don't pick an option after dialling *777*PIN#?", faq_a3:"Nothing happens. The recharge does not go through, and you'll need to try again.",
+  faq_q4:"Does unused Flex carry forward?", faq_a4:"Yes, if you recharge with Flex again before your current Flex expires, the leftover carries forward for another validity period. The only exceptions are QR10 and QR20, which never carry forward.",
+  faq_q5:"How do I check my Flex balance?", faq_a5:"Dial *130# from your phone, or check the My Vodafone app.",
+  faq_q6:"If I have data, Flex and credit balance, what gets used first?", faq_a6:"Data balance is used first, then Flex, then your Riyal credit balance last.",
+  faq_q7:"Can I use Flex while roaming outside Qatar?", faq_a7:"No. Flex can only be used locally inside Qatar. You'll need a roaming pack abroad.",
+  faq_q8:"How do I deactivate Flex?", faq_a8:"Dial *250*771# or *100# to switch off Flex and go back to standard recharges."
+},
+ur: {
+  brand_name:"فلیکس، آسان زبان میں", brand_sub:"ووڈافون قطر · غیر سرکاری گائیڈ",
+  hero_eyebrow:"پری پیڈ · صرف قطر میں",
+  hero_title:"فلیکس دراصل ایک ایکسچینج ریٹ ہے۔ اسے سمجھنا اتنا مشکل نہیں۔",
+  hero_lede:"آپ ریال ادا کرتے ہیں، ووڈافون آپ کو \u201cفلیکس\u201d پوائنٹس دیتا ہے، اور یہ پوائنٹس منٹس، ایس ایم ایس یا ڈیٹا خریدنے کے کام آتے ہیں — مگر ہر چیز کی الگ قیمت ہوتی ہے۔ اس صفحے پر آپ کو اصل ریٹ کارڈ ملے گا اور ایک کیلکولیٹر بھی، جو بتائے گا کہ آپ کا ریچارج آپ کو کیا دے گا۔",
+  hero_cta1:"کیلکولیٹر کھولیں", hero_cta2:"وہ باتیں دیکھیں جو لوگوں کو الجھن میں ڈالتی ہیں", ticker_label:"لائیو ریٹ بورڈ",
+  facts_eyebrow:"الجھن والی باتیں", facts_title:"پانچ باتیں جو تقریباً ہر کوئی غلط سمجھتا ہے",
+  facts_sub:"یہ معلومات ووڈافون قطر کی سرکاری ٹیرف دستاویز سے لی گئی ہیں (نافذ العمل 16 فروری 2025)۔",
+  fact1_h:"تین بیلنس، مگر ترتیب ایک ہی ہے", fact1_p:"اگر آپ کے پاس ایک ساتھ ڈیٹا، فلیکس اور کریڈٹ (ریال) بیلنس موجود ہو، تو ووڈافون ہمیشہ اسی ترتیب میں خرچ کرتا ہے: پہلے ڈیٹا، پھر فلیکس، اور آخر میں کریڈٹ۔ آپ خود ترتیب نہیں بدل سکتے۔",
+  fact2_h:"منٹس اور ایس ایم ایس آسان ہیں، ڈیٹا نہیں", fact2_p:"1 لوکل منٹ = 1 فلیکس۔ 1 ایس ایم ایس، چاہے لوکل ہو یا انٹرنیشنل، قیمت ایک جیسی = 1 فلیکس۔ مگر ڈیٹا اور انٹرنیشنل کالز کی فی یونٹ قیمت مختلف ہوتی ہے — نیچے کیلکولیٹر دیکھیں۔",
+  fact3_h:"QR 10 اور QR 20 کیری فارورڈ نہیں ہوتے", fact3_p:"QR15 اور اس سے اوپر کے ہر فلیکس ریچارج میں، اگر آپ ایکسپائر ہونے سے پہلے دوبارہ فلیکس سے ریچارج کریں تو بچا ہوا فلیکس اگلی مدت میں منتقل ہو جاتا ہے۔ صرف QR10 اور QR20 کا فلیکس ہمیشہ ختم ہو جاتا ہے، کیری فارورڈ نہیں ہوتا۔",
+  fact4_h:"قطر سے باہر جاتے ہی فلیکس کام کرنا بند کر دیتا ہے", fact4_p:"فلیکس صرف قطر کے اندر استعمال ہوتا ہے۔ جیسے ہی آپ رومنگ پر جائیں، فلیکس بیلنس کام نہیں کرے گا — اس کے لیے رومنگ پیک درکار ہوگا۔",
+  fact5_h:"ڈائل کوڈ ہی سب کچھ بدل دیتا ہے", fact5_p:"*777*PIN# ڈائل کر کے \u201cفلیکس\u201d کا انتخاب کریں تو فلیکس پوائنٹس ملتے ہیں۔ اگر اسی کارڈ سے *127*PIN# ڈائل کریں تو معمول کا کریڈٹ یا ڈیٹا ملے گا، فلیکس بالکل نہیں۔ ایک ہی کارڈ، دو بالکل مختلف نتائج۔",
+  packs_eyebrow:"سرکاری ریٹ کارڈ", packs_title:"ہر فلیکس ریچارج، ایک ہی جدول میں",
+  packs_sub:"ان میں سے کسی بھی رقم سے ریچارج کے بعد *777*PIN# ڈائل کریں اور فلیکس کا آپشن چنیں۔",
+  th_price:"ریچارج (QR)", th_flex:"فلیکس پوائنٹس", th_validity:"میعاد", th_carry:"کیری فارورڈ ہوتا ہے؟",
+  packs_foot:"QR 20 کو *200*771# ڈائل کر کے فوری بھی فعال کیا جا سکتا ہے (بیلنس ہونے پر ہر ہفتے خود بخود تجدید ہوتی ہے)۔ کسی بھی فلیکس پلان کو بند کرنے کے لیے *250*771# یا *100# ڈائل کریں۔",
+  calc_eyebrow:"حساب لگائیں", calc_title:"کیا آپ کا فلیکس واقعی آپ کی ضرورت پوری کرے گا؟",
+  calc_sub:"اپنا ریچارج منتخب کریں، مہینے میں اپنا تخمینی استعمال بتائیں، اور ہم آپ کو فلیکس کا پورا حساب دکھائیں گے — اور یہ بھی کہ کہیں آپ کم تو نہیں پڑ رہے۔",
+  calc_step1:"مرحلہ 1 — اپنا ریچارج منتخب کریں", calc_customlabel:"مجھے پہلے سے اپنا فلیکس بیلنس معلوم ہے:",
+  calc_step2:"مرحلہ 2 — آپ یہ کس چیز پر خرچ کریں گے؟",
+  calc_minutes_label:"لوکل منٹس / ماہانہ", calc_minutes_hint:"1 منٹ = 1 فلیکس",
+  calc_sms_label:"ایس ایم ایس / ماہانہ (لوکل + انٹرنیشنل)", calc_sms_hint:"1 ایس ایم ایس = 1 فلیکس، لوکل ہو یا انٹرنیشنل، قیمت ایک جیسی",
+  calc_data_label:"ڈیٹا / ماہانہ (GB)", calc_data_hint:"تقریباً 145 فلیکس فی GB — یہ صرف تخمینہ ہے، My Vodafone ایپ میں تصدیق کریں",
+  calc_intl_label:"انٹرنیشنل کالز", calc_addcountry:"+ ایک اور ملک شامل کریں", calc_step3:"مرحلہ 3 — آپ کا فلیکس لیجر",
+  ledger_balance:"فلیکس بیلنس", ledger_minutes:"لوکل منٹس کی لاگت", ledger_sms:"ایس ایم ایس کی لاگت", ledger_data:"ڈیٹا کی لاگت (تخمینہ)",
+  ledger_intl:"انٹرنیشنل کالز کی لاگت", ledger_needed:"کل درکار فلیکس",
+  pick_prompt:"اپنا لیجر دیکھنے کے لیے اوپر سے ریچارج منتخب کریں، یا اپنا معلوم فلیکس بیلنس درج کریں۔",
+  verdict_ok:"آپ کا کام بن جائے گا۔ اس استعمال کے بعد {left} فلیکس بچ جائیں گے۔",
+  verdict_bad:"آپ کو {short} فلیکس کی کمی ہے۔ اس کے بجائے QR {pack} ریچارج ({flex} فلیکس) کافی ہوگا۔",
+  verdict_bad_none:"آپ کے ماہانہ استعمال کے لیے کسی بھی ایک ریچارج سے زیادہ فلیکس درکار ہے۔ دو ریچارج ملا کر دیکھیں، یا فلیکس کے بجائے کومبو یا ڈیٹا پلان پر غور کریں۔",
+  intl_eyebrow:"بیرونِ ملک کالز", intl_title:"1 منٹ کی قیمت فلیکس میں، ملک کے حساب سے",
+  intl_sub:"لوکل اور انٹرنیشنل ایس ایم ایس دونوں کی قیمت 1 فلیکس ہے۔ انٹرنیشنل کالز کی قیمت فی منٹ ہے، نیچے ممالک کے گروپ کے مطابق دی گئی ہے۔",
+  th_group:"فلیکس / منٹ", th_countries:"ممالک (مثالیں)",
+  intl_g1:"انڈیا، بنگلہ دیش", intl_g3:"پاکستان، فلپائن",
+  intl_g5:"بحرین، مصر، انڈونیشیا، کینیا، کویت، ملائیشیا، نیپال، نائیجیریا، عمان، سعودی عرب، سری لنکا، تھائی لینڈ، یو اے ای، یوکے، یو ایس اے، فرانس، اسپین",
+  intl_g6:"ترکی",
+  intl_g10:"آسٹریلیا، کینیڈا، جرمنی، اٹلی، جاپان، اردن، لبنان، چین، ہانگ کانگ، آئرلینڈ، نیدرلینڈز، نیوزی لینڈ، روس، سنگاپور، جنوبی کوریا، جنوبی افریقہ، اور دیگر",
+  intl_g15:"ارجنٹینا، بیلجیم، آئس لینڈ، پولینڈ، یوکرین، بلغاریہ، کروشیا، اور دیگر",
+  intl_g30:"الجیریا، لیبیا، تیونس، جمیکا، بہاماس، اور دیگر",
+  intl_foot:"مکمل ملک بہ ملک فہرست vodafone.qa پر موجود ہے — یہ جدول قطر میں رہائش پذیر افراد کی سب سے زیادہ کالز والے ممالک پر مشتمل ہے۔",
+  faq_eyebrow:"صاف جوابات", faq_title:"اکثر پوچھے جانے والے سوالات",
+  footer_seal:"غیر سرکاری · ووڈافون قطر سے وابستہ نہیں",
+  footer_p1:"یہ صفحہ ووڈافون قطر کی سرکاری پری پیڈ ٹیرف دستاویز (نافذ العمل 16 فروری 2025، ورژن 72) اور ووڈافون قطر کے شائع شدہ فلیکس پری پیڈ FAQ سے بنایا گیا ہے۔ فلیکس کی مقدار، قیمتیں، میعاد اور ممالک کے ریٹس کسی بھی وقت تبدیل ہو سکتے ہیں۔",
+  footer_p2:"کسی اہم کال سے پہلے اپنا اصل فلیکس بیلنس اور موجودہ ریٹس *130# ڈائل کر کے، My Vodafone ایپ میں، یا vodafone.qa پر ضرور تصدیق کریں۔",
+  val_3:"3 دن", val_5act:"ایکٹیویشن کا دن + 5 دن", val_7:"7 دن", val_14:"14 دن", val_28:"28 دن",
+  carry_yes:"ہاں", carry_no:"نہیں",
+  c_india:"انڈیا", c_bangladesh:"بنگلہ دیش", c_pakistan:"پاکستان", c_philippines:"فلپائن", c_nepal:"نیپال",
+  c_srilanka:"سری لنکا", c_egypt:"مصر", c_saudi:"سعودی عرب", c_uae:"یو اے ای", c_kuwait:"کویت", c_bahrain:"بحرین",
+  c_thailand:"تھائی لینڈ", c_uk:"یوکے", c_usa:"یو ایس اے", c_turkey:"ترکی", c_jordan:"اردن", c_lebanon:"لبنان",
+  c_canada:"کینیڈا", c_australia:"آسٹریلیا", c_germany:"جرمنی", c_other:"دیگر ملک (تخمینی)",
+  intlRemoveLabel:"ہٹائیں",
+  faq_q1:"میں فلیکس کیسے خریدوں؟", faq_a1:"QR 15، 40، 50، 65، 80، 100، 120، 150، 200، 300 یا 500 میں سے کسی رقم سے ریچارج کریں اور اپنے فون سے *777*PIN# ڈائل کریں، پھر فلیکس کا آپشن منتخب کریں۔ یا صرف *200*771# ڈائل کر کے QR20 میں 150 فلیکس حاصل کریں، جس کی میعاد 7 دن ہے۔",
+  faq_q2:"اگر میں *777*PIN# کی بجائے *127*PIN# ڈائل کروں تو کیا ہوگا؟", faq_a2:"آپ کو کارڈ کا معمول کا، غیر فلیکس فائدہ ملے گا، مثلاً QR55 کارڈ سیدھا QR55 کریڈٹ دے گا، فلیکس نہیں۔",
+  faq_q3:"اگر *777*PIN# ڈائل کرنے کے بعد میں کوئی آپشن منتخب نہ کروں تو؟", faq_a3:"کچھ نہیں ہوگا۔ ریچارج مکمل نہیں ہوگا اور آپ کو دوبارہ کوشش کرنا ہوگی۔",
+  faq_q4:"کیا بچا ہوا فلیکس اگلی مدت میں منتقل ہوتا ہے؟", faq_a4:"جی ہاں، اگر آپ موجودہ فلیکس ختم ہونے سے پہلے دوبارہ فلیکس سے ریچارج کریں تو بچا ہوا فلیکس اگلی میعاد میں شامل ہو جاتا ہے۔ صرف QR10 اور QR20 اس سے مستثنیٰ ہیں اور کبھی منتقل نہیں ہوتے۔",
+  faq_q5:"میں اپنا فلیکس بیلنس کیسے چیک کروں؟", faq_a5:"اپنے فون سے *130# ڈائل کریں، یا My Vodafone ایپ میں چیک کریں۔",
+  faq_q6:"اگر میرے پاس ڈیٹا، فلیکس اور کریڈٹ تینوں بیلنس ہوں تو پہلے کیا استعمال ہوگا؟", faq_a6:"پہلے ڈیٹا بیلنس استعمال ہوتا ہے، پھر فلیکس، اور سب سے آخر میں ریال کریڈٹ۔",
+  faq_q7:"کیا میں قطر سے باہر رومنگ پر فلیکس استعمال کر سکتا ہوں؟", faq_a7:"نہیں۔ فلیکس صرف قطر کے اندر استعمال ہو سکتا ہے۔ بیرونِ ملک کے لیے رومنگ پیک درکار ہوگا۔",
+  faq_q8:"میں فلیکس کیسے بند کروں؟", faq_a8:"فلیکس بند کر کے معمول کے ریچارج پر واپس جانے کے لیے *250*771# یا *100# ڈائل کریں۔"
+},
+ml: {
+  brand_name:"ഫ്ലെക്സ്, ലളിതമായി", brand_sub:"വൊഡാഫോൺ ഖത്തർ · അനൗദ്യോഗിക ഗൈഡ്",
+  hero_eyebrow:"പ്രീപെയ്ഡ് · ഖത്തറിൽ മാത്രം",
+  hero_title:"ഫ്ലെക്സ് എന്നത് ഒരു എക്സ്ചേഞ്ച് റേറ്റ് മാത്രമാണ്. ഇത് എങ്ങനെ വായിക്കാമെന്ന് നോക്കാം.",
+  hero_lede:"നിങ്ങൾ റിയാൽ നൽകുന്നു, വൊഡാഫോൺ നിങ്ങൾക്ക് \u201cഫ്ലെക്സ്\u201d പോയിന്റുകൾ തരുന്നു, ഈ പോയിന്റുകൾ മിനിറ്റ്സ്, എസ്എംഎസ് അല്ലെങ്കിൽ ഡാറ്റ വാങ്ങാൻ ഉപയോഗിക്കാം — പക്ഷേ ഓരോന്നിനും വ്യത്യസ്ത നിരക്കാണ്. ഈ പേജിൽ യഥാർത്ഥ റേറ്റ് കാർഡും, നിങ്ങളുടെ റീചാർജ് കൃത്യമായി എന്ത് തരുമെന്ന് കാണിക്കുന്ന ഒരു കാൽക്കുലേറ്ററും ഉണ്ട്.",
+  hero_cta1:"കാൽക്കുലേറ്റർ തുറക്കുക", hero_cta2:"ആളുകളെ ആശയക്കുഴപ്പത്തിലാക്കുന്ന കാര്യങ്ങൾ കാണുക", ticker_label:"ലൈവ് റേറ്റ് ബോർഡ്",
+  facts_eyebrow:"ആശയക്കുഴപ്പമുള്ള കാര്യങ്ങൾ", facts_title:"മിക്കവരും തെറ്റിദ്ധരിക്കുന്ന അഞ്ച് കാര്യങ്ങൾ",
+  facts_sub:"വൊഡാഫോൺ ഖത്തറിന്റെ ഔദ്യോഗിക താരിഫ് രേഖയിൽ നിന്ന് (16 ഫെബ്രുവരി 2025 മുതൽ പ്രാബല്യത്തിൽ).",
+  fact1_h:"മൂന്ന് ബാലൻസുകൾ, ഒരേ ഒരു ക്രമം", fact1_p:"ഡാറ്റ, ഫ്ലെക്സ്, ക്രെഡിറ്റ് (റിയാൽ) ബാലൻസ് ഒരേസമയം ഉണ്ടെങ്കിൽ, വൊഡാഫോൺ എപ്പോഴും ഈ ക്രമത്തിലാണ് ചെലവഴിക്കുന്നത്: ആദ്യം ഡാറ്റ, പിന്നെ ഫ്ലെക്സ്, അവസാനം ക്രെഡിറ്റ്. ഇത് നിങ്ങൾക്ക് മാറ്റാൻ കഴിയില്ല.",
+  fact2_h:"മിനിറ്റ്സും എസ്എംഎസും ലളിതമാണ്, ഡാറ്റ അല്ല", fact2_p:"1 ലോക്കൽ മിനിറ്റ് = 1 ഫ്ലെക്സ്. 1 എസ്എംഎസ്, ലോക്കൽ ആയാലും ഇന്റർനാഷണൽ ആയാലും, ഒരേ വില = 1 ഫ്ലെക്സ്. പക്ഷേ ഡാറ്റയ്ക്കും ഇന്റർനാഷണൽ കോളുകൾക്കും ഓരോ യൂണിറ്റിനും വ്യത്യസ്ത ഫ്ലെക്സ് ആണ് — താഴെയുള്ള കാൽക്കുലേറ്റർ നോക്കുക.",
+  fact3_h:"QR 10, QR 20 എന്നിവ കാരി ഫോർവേഡ് ആകില്ല", fact3_p:"QR15 മുതൽ മുകളിലോട്ടുള്ള എല്ലാ ഫ്ലെക്സ് റീചാർജുകളിലും, കാലാവധി തീരുന്നതിന് മുമ്പ് വീണ്ടും ഫ്ലെക്സ് ഉപയോഗിച്ച് റീചാർജ് ചെയ്താൽ, ബാക്കിയുള്ള ഫ്ലെക്സ് അടുത്ത കാലയളവിലേക്ക് കാരി ഫോർവേഡ് ആകും. QR10, QR20 ഫ്ലെക്സ് മാത്രം എപ്പോഴും കാലഹരണപ്പെടും, കാരി ഫോർവേഡ് ഇല്ല.",
+  fact4_h:"ഖത്തറിന് പുറത്ത് പോകുന്ന നിമിഷം ഫ്ലെക്സ് പ്രവർത്തിക്കില്ല", fact4_p:"ഫ്ലെക്സ് ഖത്തറിനുള്ളിൽ മാത്രമേ ഉപയോഗിക്കാൻ കഴിയൂ. നിങ്ങൾ റോമിംഗിൽ ആകുന്ന നിമിഷം ഫ്ലെക്സ് ബാലൻസ് ഉപയോഗിക്കാൻ കഴിയില്ല — അതിന് റോമിംഗ് പാക്ക് വേണം.",
+  fact5_h:"നിങ്ങൾ ഡയൽ ചെയ്യുന്ന കോഡ് എല്ലാം മാറ്റും", fact5_p:"*777*PIN# ഡയൽ ചെയ്ത് \u201cഫ്ലെക്സ്\u201d തിരഞ്ഞെടുത്താൽ ഫ്ലെക്സ് പോയിന്റുകൾ ലഭിക്കും. പകരം അതേ കാർഡിൽ *127*PIN# ഡയൽ ചെയ്താൽ സാധാരണ ക്രെഡിറ്റ് അല്ലെങ്കിൽ ഡാറ്റ ലഭിക്കും, ഫ്ലെക്സ് ഒട്ടും ഇല്ല. ഒരേ കാർഡ്, പൂർണമായും വ്യത്യസ്തമായ രണ്ട് ഫലങ്ങൾ.",
+  packs_eyebrow:"ഔദ്യോഗിക റേറ്റ് കാർഡ്", packs_title:"എല്ലാ ഫ്ലെക്സ് റീചാർജും ഒരൊറ്റ പട്ടികയിൽ",
+  packs_sub:"ഈ തുകകളിൽ ഏതെങ്കിലും ഉപയോഗിച്ച് റീചാർജ് ചെയ്ത ശേഷം *777*PIN# ഡയൽ ചെയ്ത് ഫ്ലെക്സ് ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക.",
+  th_price:"റീചാർജ് (QR)", th_flex:"ഫ്ലെക്സ് പോയിന്റുകൾ", th_validity:"കാലാവധി", th_carry:"കാരി ഫോർവേഡ് ആകുമോ?",
+  packs_foot:"*200*771# ഡയൽ ചെയ്ത് QR 20 ഉടനടി സജീവമാക്കാം (ബാലൻസ് ഉള്ളിടത്തോളം എല്ലാ ആഴ്ചയും സ്വയം പുതുക്കും). ഏതെങ്കിലും ഫ്ലെക്സ് പ്ലാൻ നിർത്താൻ *250*771# അല്ലെങ്കിൽ *100# ഡയൽ ചെയ്യുക.",
+  calc_eyebrow:"കണക്ക് കൂട്ടാം", calc_title:"നിങ്ങളുടെ ഫ്ലെക്സ് യഥാർത്ഥത്തിൽ നിങ്ങളുടെ ആവശ്യത്തിന് മതിയാകുമോ?",
+  calc_sub:"ഒരു റീചാർജ് തിരഞ്ഞെടുക്കുക, ഒരു മാസത്തിൽ നിങ്ങൾ ഏകദേശം എത്ര ഉപയോഗിക്കുമെന്ന് പറയുക, ഫ്ലെക്സ് കണക്ക് ഞങ്ങൾ കാണിച്ചുതരാം — നിങ്ങൾക്ക് കുറവുണ്ടോ എന്നും.",
+  calc_step1:"സ്റ്റെപ്പ് 1 — നിങ്ങളുടെ റീചാർജ് തിരഞ്ഞെടുക്കുക", calc_customlabel:"എന്റെ ഫ്ലെക്സ് ബാലൻസ് എനിക്ക് നേരത്തെ അറിയാം:",
+  calc_step2:"സ്റ്റെപ്പ് 2 — ഇത് എന്തിന് ഉപയോഗിക്കും?",
+  calc_minutes_label:"ലോക്കൽ മിനിറ്റ്സ് / മാസം", calc_minutes_hint:"1 മിനിറ്റ് = 1 ഫ്ലെക്സ്",
+  calc_sms_label:"എസ്എംഎസ് / മാസം (ലോക്കൽ + ഇന്റർനാഷണൽ)", calc_sms_hint:"1 എസ്എംഎസ് = 1 ഫ്ലെക്സ്, ലോക്കൽ ആയാലും ഇന്റർനാഷണൽ ആയാലും ഒരേ നിരക്ക്",
+  calc_data_label:"ഡാറ്റ / മാസം (GB)", calc_data_hint:"ഏകദേശം 145 ഫ്ലെക്സ് / GB — ഇത് ഒരു ഏകദേശ കണക്ക് മാത്രമാണ്, My Vodafone ആപ്പിൽ ഉറപ്പാക്കുക",
+  calc_intl_label:"ഇന്റർനാഷണൽ കോളുകൾ", calc_addcountry:"+ മറ്റൊരു രാജ്യം ചേർക്കുക", calc_step3:"സ്റ്റെപ്പ് 3 — നിങ്ങളുടെ ഫ്ലെക്സ് ലെഡ്ജർ",
+  ledger_balance:"ഫ്ലെക്സ് ബാലൻസ്", ledger_minutes:"ലോക്കൽ മിനിറ്റ്സിന്റെ ചെലവ്", ledger_sms:"എസ്എംഎസിന്റെ ചെലവ്", ledger_data:"ഡാറ്റയുടെ ചെലവ് (ഏകദേശം)",
+  ledger_intl:"ഇന്റർനാഷണൽ കോളുകളുടെ ചെലവ്", ledger_needed:"ആകെ വേണ്ട ഫ്ലെക്സ്",
+  pick_prompt:"നിങ്ങളുടെ ലെഡ്ജർ കാണാൻ മുകളിൽ നിന്ന് ഒരു റീചാർജ് തിരഞ്ഞെടുക്കുക, അല്ലെങ്കിൽ അറിയാവുന്ന ഫ്ലെക്സ് ബാലൻസ് നൽകുക.",
+  verdict_ok:"നിങ്ങൾക്ക് മതിയാകും. ഈ ഉപയോഗത്തിന് ശേഷം {left} ഫ്ലെക്സ് ബാക്കിയുണ്ടാകും.",
+  verdict_bad:"നിങ്ങൾക്ക് {short} ഫ്ലെക്സ് കുറവാണ്. പകരം QR {pack} റീചാർജ് ({flex} ഫ്ലെക്സ്) മതിയാകും.",
+  verdict_bad_none:"നിങ്ങളുടെ മാസത്തെ ഉപയോഗത്തിന് ഏതെങ്കിലും ഒരു റീചാർജിനെക്കാൾ കൂടുതൽ ഫ്ലെക്സ് വേണം. രണ്ട് റീചാർജുകൾ ഒരുമിച്ച് ചെയ്യുക, അല്ലെങ്കിൽ ഫ്ലെക്സിന് പകരം കോംബോ അല്ലെങ്കിൽ ഡാറ്റ പ്ലാൻ പരിഗണിക്കുക.",
+  intl_eyebrow:"വിദേശത്തേക്കുള്ള കോളുകൾ", intl_title:"1 മിനിറ്റിന്റെ വില ഫ്ലെക്സിൽ, രാജ്യം അനുസരിച്ച്",
+  intl_sub:"ലോക്കൽ, ഇന്റർനാഷണൽ എസ്എംഎസ് രണ്ടിനും 1 ഫ്ലെക്സ് വിലയാണ്. ഇന്റർനാഷണൽ കോളുകൾക്ക് മിനിറ്റ് അനുസരിച്ച് വില, രാജ്യം അനുസരിച്ച് താഴെ ഗ്രൂപ്പ് ചെയ്തിരിക്കുന്നു.",
+  th_group:"ഫ്ലെക്സ് / മിനിറ്റ്", th_countries:"രാജ്യങ്ങൾ (ഉദാഹരണങ്ങൾ)",
+  intl_g1:"ഇന്ത്യ, ബംഗ്ലാദേശ്", intl_g3:"പാകിസ്ഥാൻ, ഫിലിപ്പീൻസ്",
+  intl_g5:"ബഹ്റൈൻ, ഈജിപ്ത്, ഇന്തോനേഷ്യ, കെനിയ, കുവൈറ്റ്, മലേഷ്യ, നേപ്പാൾ, നൈജീരിയ, ഒമാൻ, സൗദി അറേബ്യ, ശ്രീലങ്ക, തായ്‌ലൻഡ്, യുഎഇ, യുകെ, യുഎസ്എ, ഫ്രാൻസ്, സ്പെയിൻ",
+  intl_g6:"തുർക്കി",
+  intl_g10:"ഓസ്ട്രേലിയ, കാനഡ, ജർമനി, ഇറ്റലി, ജപ്പാൻ, ജോർദാൻ, ലെബനൻ, ചൈന, ഹോങ്കോംഗ്, അയർലൻഡ്, നെതർലൻഡ്സ്, ന്യൂസിലൻഡ്, റഷ്യ, സിംഗപ്പൂർ, ദക്ഷിണ കൊറിയ, ദക്ഷിണാഫ്രിക്ക, മറ്റും",
+  intl_g15:"അർജന്റീന, ബെൽജിയം, ഐസ്‌ലൻഡ്, പോളണ്ട്, ഉക്രെയ്ൻ, ബൾഗേറിയ, ക്രൊയേഷ്യ, മറ്റും",
+  intl_g30:"അൾജീരിയ, ലിബിയ, ടുണീഷ്യ, ജമൈക്ക, ബഹാമസ്, മറ്റും",
+  intl_foot:"പൂർണ്ണമായ രാജ്യാടിസ്ഥാന പട്ടിക vodafone.qa-ൽ ലഭ്യമാണ് — ഖത്തറിലുള്ളവർ കൂടുതലായി വിളിക്കുന്ന രാജ്യങ്ങളാണ് ഈ പട്ടികയിൽ.",
+  faq_eyebrow:"നേരായ ഉത്തരങ്ങൾ", faq_title:"പതിവായി ചോദിക്കുന്ന ചോദ്യങ്ങൾ",
+  footer_seal:"അനൗദ്യോഗികം · വൊഡാഫോൺ ഖത്തറുമായി ബന്ധമില്ല",
+  footer_p1:"വൊഡാഫോൺ ഖത്തറിന്റെ ഔദ്യോഗിക പ്രീപെയ്ഡ് താരിഫ് രേഖ (16 ഫെബ്രുവരി 2025 മുതൽ പ്രാബല്യത്തിൽ, പതിപ്പ് 72), വൊഡാഫോൺ ഖത്തർ പ്രസിദ്ധീകരിച്ച ഫ്ലെക്സ് പ്രീപെയ്ഡ് FAQ എന്നിവയിൽ നിന്നാണ് ഇത് നിർമ്മിച്ചിരിക്കുന്നത്. ഫ്ലെക്സ് അളവുകൾ, വിലകൾ, കാലാവധി, രാജ്യ നിരക്കുകൾ എന്നിവ എപ്പോൾ വേണമെങ്കിലും മാറാം.",
+  footer_p2:"പ്രധാനപ്പെട്ട ഒരു കോളിന് മുമ്പ്, നിങ്ങളുടെ യഥാർത്ഥ ഫ്ലെക്സ് ബാലൻസും നിലവിലെ നിരക്കുകളും *130# ഡയൽ ചെയ്തോ, My Vodafone ആപ്പിലോ, vodafone.qa-യിലോ എപ്പോഴും ഉറപ്പാക്കുക.",
+  val_3:"3 ദിവസം", val_5act:"ആക്ടിവേഷൻ ദിവസം + 5 ദിവസം", val_7:"7 ദിവസം", val_14:"14 ദിവസം", val_28:"28 ദിവസം",
+  carry_yes:"ഉണ്ട്", carry_no:"ഇല്ല",
+  c_india:"ഇന്ത്യ", c_bangladesh:"ബംഗ്ലാദേശ്", c_pakistan:"പാകിസ്ഥാൻ", c_philippines:"ഫിലിപ്പീൻസ്", c_nepal:"നേപ്പാൾ",
+  c_srilanka:"ശ്രീലങ്ക", c_egypt:"ഈജിപ്ത്", c_saudi:"സൗദി അറേബ്യ", c_uae:"യുഎഇ", c_kuwait:"കുവൈറ്റ്", c_bahrain:"ബഹ്റൈൻ",
+  c_thailand:"തായ്‌ലൻഡ്", c_uk:"യുകെ", c_usa:"യുഎസ്എ", c_turkey:"തുർക്കി", c_jordan:"ജോർദാൻ", c_lebanon:"ലെബനൻ",
+  c_canada:"കാനഡ", c_australia:"ഓസ്ട്രേലിയ", c_germany:"ജർമനി", c_other:"മറ്റ് രാജ്യം (ഏകദേശം)",
+  intlRemoveLabel:"നീക്കം ചെയ്യുക",
+  faq_q1:"ഞാൻ എങ്ങനെ ഫ്ലെക്സ് വാങ്ങും?", faq_a1:"QR 15, 40, 50, 65, 80, 100, 120, 150, 200, 300 അല്ലെങ്കിൽ 500 ഇതിൽ ഏതെങ്കിലും തുകയ്ക്ക് റീചാർജ് ചെയ്ത് *777*PIN# ഡയൽ ചെയ്യുക, എന്നിട്ട് ഫ്ലെക്സ് ഓപ്ഷൻ തിരഞ്ഞെടുക്കുക. അല്ലെങ്കിൽ *200*771# ഡയൽ ചെയ്ത് QR20-ന് 150 ഫ്ലെക്സ് നേടുക, 7 ദിവസത്തേക്ക് സാധുവായിരിക്കും.",
+  faq_q2:"*777*PIN#-ന് പകരം *127*PIN# ഡയൽ ചെയ്താൽ എന്ത് സംഭവിക്കും?", faq_a2:"നിങ്ങൾക്ക് കാർഡിന്റെ സാധാരണ, ഫ്ലെക്സ് അല്ലാത്ത ആനുകൂല്യം ലഭിക്കും, ഉദാഹരണത്തിന് QR55 കാർഡ് നേരിട്ട് QR55 ക്രെഡിറ്റ് തരും, ഫ്ലെക്സ് അല്ല.",
+  faq_q3:"*777*PIN# ഡയൽ ചെയ്ത ശേഷം ഞാൻ ഒരു ഓപ്ഷനും തിരഞ്ഞെടുത്തില്ലെങ്കിൽ?", faq_a3:"ഒന്നും സംഭവിക്കില്ല. റീചാർജ് നടക്കില്ല, വീണ്ടും ശ്രമിക്കേണ്ടി വരും.",
+  faq_q4:"ഉപയോഗിക്കാത്ത ഫ്ലെക്സ് അടുത്ത കാലയളവിലേക്ക് കാരി ഫോർവേഡ് ആകുമോ?", faq_a4:"അതെ, നിലവിലെ ഫ്ലെക്സ് കാലഹരണപ്പെടുന്നതിന് മുമ്പ് വീണ്ടും ഫ്ലെക്സ് ഉപയോഗിച്ച് റീചാർജ് ചെയ്താൽ, ബാക്കിയുള്ളത് അടുത്ത കാലയളവിലേക്ക് കാരി ഫോർവേഡ് ആകും. QR10, QR20 എന്നിവ മാത്രമാണ് ഇതിൽ നിന്ന് ഒഴിവുള്ളത്, അവ ഒരിക്കലും കാരി ഫോർവേഡ് ആകില്ല.",
+  faq_q5:"എന്റെ ഫ്ലെക്സ് ബാലൻസ് എങ്ങനെ പരിശോധിക്കാം?", faq_a5:"നിങ്ങളുടെ ഫോണിൽ നിന്ന് *130# ഡയൽ ചെയ്യുക, അല്ലെങ്കിൽ My Vodafone ആപ്പിൽ പരിശോധിക്കുക.",
+  faq_q6:"ഡാറ്റ, ഫ്ലെക്സ്, ക്രെഡിറ്റ് ബാലൻസ് മൂന്നും ഉണ്ടെങ്കിൽ ആദ്യം എന്താണ് ഉപയോഗിക്കുക?", faq_a6:"ആദ്യം ഡാറ്റ ബാലൻസ് ഉപയോഗിക്കും, പിന്നെ ഫ്ലെക്സ്, അവസാനം റിയാൽ ക്രെഡിറ്റ്.",
+  faq_q7:"ഖത്തറിന് പുറത്ത് റോമിംഗിൽ ഫ്ലെക്സ് ഉപയോഗിക്കാമോ?", faq_a7:"ഇല്ല. ഫ്ലെക്സ് ഖത്തറിനുള്ളിൽ മാത്രമേ ഉപയോഗിക്കാൻ കഴിയൂ. വിദേശത്ത് ഒരു റോമിംഗ് പാക്ക് വേണ്ടി വരും.",
+  faq_q8:"ഫ്ലെക്സ് എങ്ങനെ ഓഫ് ചെയ്യാം?", faq_a8:"ഫ്ലെക്സ് ഓഫ് ചെയ്ത് സാധാരണ റീചാർജിലേക്ക് മടങ്ങാൻ *250*771# അല്ലെങ്കിൽ *100# ഡയൽ ചെയ്യുക."
+},
+ar: {
+  brand_name:"فلكس، باختصار", brand_sub:"فودافون قطر · دليل غير رسمي",
+  hero_eyebrow:"مسبقة الدفع · داخل قطر فقط",
+  hero_title:"فلكس هو مجرد سعر صرف. إليك كيف تفهمه.",
+  hero_lede:"أنت تدفع ريالات، ويمنحك فودافون نقاط \u201cفلكس\u201d، وهذه النقاط تُستخدم لشراء الدقائق أو الرسائل أو البيانات — لكن لكل خدمة سعر مختلف. هذه الصفحة تعرض لك بطاقة الأسعار الحقيقية، وحاسبة توضح لك بالضبط ما الذي ستحصل عليه مقابل شحنتك.",
+  hero_cta1:"افتح الحاسبة", hero_cta2:"اطّلع على ما يربك الناس", ticker_label:"لوحة الأسعار المباشرة",
+  facts_eyebrow:"النقاط المربكة", facts_title:"خمسة أمور يخطئ فيها معظم الناس",
+  facts_sub:"مستقاة مباشرة من وثيقة التعرفة الرسمية لفودافون قطر (سارية المفعول منذ 16 فبراير 2025).",
+  fact1_h:"ثلاثة أرصدة، وترتيب واحد فقط", fact1_p:"إذا كان لديك رصيد بيانات وفلكس وائتمان (ريال) في الوقت نفسه، يخصمها فودافون دائمًا بهذا الترتيب: البيانات أولاً، ثم فلكس، ثم الائتمان أخيرًا. لا يمكنك تغيير هذا الترتيب.",
+  fact2_h:"الدقائق والرسائل بسيطة، أما البيانات فلا", fact2_p:"الدقيقة المحلية الواحدة = 1 فلكس. الرسالة الواحدة، محلية كانت أو دولية، بنفس السعر = 1 فلكس. لكن البيانات والمكالمات الدولية لها أسعار مختلفة لكل وحدة — راجع الحاسبة أدناه.",
+  fact3_h:"شحنة QR10 وQR20 لا تُرحَّل", fact3_p:"في كل شحنة فلكس أخرى، من QR15 فما فوق، إذا أعدت الشحن بفلكس قبل انتهاء صلاحية رصيدك الحالي، يُرحَّل الفلكس المتبقي إلى فترة جديدة. شحنتا QR10 وQR20 فقط تنتهيان دائمًا دون ترحيل.",
+  fact4_h:"فلكس يتوقف عن العمل فور مغادرتك قطر", fact4_p:"فلكس يعمل داخل قطر فقط. بمجرد أن تكون في التجوال خارج قطر، لا يمكنك استخدام رصيد فلكس — ستحتاج إلى باقة تجوال بدلاً منه.",
+  fact5_h:"الرمز الذي تطلبه يغيّر كل شيء", fact5_p:"اطلب *777*PIN# واختر \u201cفلكس\u201d للحصول على نقاط فلكس. أما إذا طلبت *127*PIN# بنفس البطاقة، فستحصل على المنفعة العادية، رصيد أو بيانات، دون أي فلكس. نفس البطاقة، نتيجتان مختلفتان تمامًا.",
+  packs_eyebrow:"بطاقة الأسعار الرسمية", packs_title:"كل شحنات فلكس، في جدول واحد",
+  packs_sub:"بعد الشحن بأي من هذه المبالغ، اطلب *777*PIN# ثم اختر خيار فلكس.",
+  th_price:"الشحنة (ر.ق)", th_flex:"نقاط فلكس", th_validity:"مدة الصلاحية", th_carry:"هل تُرحَّل؟",
+  packs_foot:"يمكن أيضًا تفعيل شحنة QR20 فورًا بطلب *200*771# (تتجدد أسبوعيًا تلقائيًا طالما لديك رصيد). لإلغاء أي باقة فلكس، اطلب *250*771# أو *100#.",
+  calc_eyebrow:"احسب بنفسك", calc_title:"هل سيغطي فلكس احتياجك فعلاً؟",
+  calc_sub:"اختر شحنتك، أخبرنا تقريبًا باستخدامك الشهري، وسنوضح لك حساب الفلكس بالتفصيل — وهل سينقصك أم لا.",
+  calc_step1:"الخطوة 1 — اختر شحنتك", calc_customlabel:"أعرف رصيد فلكس الخاص بي مسبقًا:",
+  calc_step2:"الخطوة 2 — فيما ستستخدمه؟",
+  calc_minutes_label:"الدقائق المحلية / شهريًا", calc_minutes_hint:"1 فلكس لكل دقيقة",
+  calc_sms_label:"الرسائل / شهريًا (محلية + دولية)", calc_sms_hint:"1 فلكس لكل رسالة، بنفس السعر محليًا أو دوليًا",
+  calc_data_label:"البيانات / شهريًا (جيجابايت)", calc_data_hint:"حوالي 145 فلكس لكل جيجابايت — تقدير فقط، تأكد عبر تطبيق My Vodafone",
+  calc_intl_label:"المكالمات الدولية", calc_addcountry:"+ أضف دولة أخرى", calc_step3:"الخطوة 3 — دفتر فلكس الخاص بك",
+  ledger_balance:"رصيد فلكس", ledger_minutes:"تكلفة الدقائق المحلية", ledger_sms:"تكلفة الرسائل", ledger_data:"تكلفة البيانات (تقديرية)",
+  ledger_intl:"تكلفة المكالمات الدولية", ledger_needed:"إجمالي الفلكس المطلوب",
+  pick_prompt:"اختر شحنة من الأعلى، أو أدخل رصيد فلكس معروف لديك، لرؤية دفترك.",
+  verdict_ok:"رصيدك يكفي. سيتبقى لديك {left} فلكس بعد هذا الاستخدام.",
+  verdict_bad:"ينقصك {short} فلكس. شحنة QR {pack} ({flex} فلكس) ستكفي بدلاً من ذلك.",
+  verdict_bad_none:"استخدامك الشهري يحتاج فلكس أكثر مما توفره أي شحنة واحدة. فكّر في الجمع بين شحنتين، أو التحول إلى باقة كومبو أو بيانات بدلاً من فلكس.",
+  intl_eyebrow:"المكالمات للخارج", intl_title:"تكلفة الدقيقة الواحدة بالفلكس، حسب الدولة",
+  intl_sub:"الرسائل المحلية والدولية كلاهما بسعر 1 فلكس. أما المكالمات الدولية فسعرها بالدقيقة، مجمّعة حسب الدولة أدناه.",
+  th_group:"فلكس / دقيقة", th_countries:"الدول (أمثلة)",
+  intl_g1:"الهند، بنغلاديش", intl_g3:"باكستان، الفلبين",
+  intl_g5:"البحرين، مصر، إندونيسيا، كينيا، الكويت، ماليزيا، نيبال، نيجيريا، عمان، السعودية، سريلانكا، تايلاند، الإمارات، بريطانيا، أمريكا، فرنسا، إسبانيا",
+  intl_g6:"تركيا",
+  intl_g10:"أستراليا، كندا، ألمانيا، إيطاليا، اليابان، الأردن، لبنان، الصين، هونغ كونغ، أيرلندا، هولندا، نيوزيلندا، روسيا، سنغافورة، كوريا الجنوبية، جنوب أفريقيا، وغيرها",
+  intl_g15:"الأرجنتين، بلجيكا، آيسلندا، بولندا، أوكرانيا، بلغاريا، كرواتيا، وغيرها",
+  intl_g30:"الجزائر، ليبيا، تونس، جامايكا، الباهاما، وغيرها",
+  intl_foot:"القائمة الكاملة لكل دولة متوفرة على vodafone.qa — هذا الجدول يغطي الوجهات الأكثر اتصالاً من سكان قطر.",
+  faq_eyebrow:"إجابات واضحة", faq_title:"الأسئلة الشائعة",
+  footer_seal:"غير رسمي · لا علاقة له بفودافون قطر",
+  footer_p1:"تم إعداد هذه الصفحة بالاستناد إلى وثيقة التعرفة الرسمية مسبقة الدفع لفودافون قطر (سارية المفعول منذ 16 فبراير 2025، الإصدار 72)، والأسئلة الشائعة المنشورة من فودافون قطر حول فلكس مسبق الدفع. قد تتغير كميات فلكس والأسعار ومدد الصلاحية وأسعار الدول في أي وقت.",
+  footer_p2:"تأكد دائمًا من رصيد فلكس الحقيقي والأسعار الحالية بالاتصال بـ *130#، أو عبر تطبيق My Vodafone، أو من موقع vodafone.qa، قبل الاعتماد على هذه الأرقام لمكالمة مهمة.",
+  val_3:"3 أيام", val_5act:"يوم التفعيل + 5 أيام", val_7:"7 أيام", val_14:"14 يومًا", val_28:"28 يومًا",
+  carry_yes:"نعم", carry_no:"لا",
+  c_india:"الهند", c_bangladesh:"بنغلاديش", c_pakistan:"باكستان", c_philippines:"الفلبين", c_nepal:"نيبال",
+  c_srilanka:"سريلانكا", c_egypt:"مصر", c_saudi:"السعودية", c_uae:"الإمارات", c_kuwait:"الكويت", c_bahrain:"البحرين",
+  c_thailand:"تايلاند", c_uk:"بريطانيا", c_usa:"أمريكا", c_turkey:"تركيا", c_jordan:"الأردن", c_lebanon:"لبنان",
+  c_canada:"كندا", c_australia:"أستراليا", c_germany:"ألمانيا", c_other:"دولة أخرى (تقريبي)",
+  intlRemoveLabel:"إزالة",
+  faq_q1:"كيف أشتري فلكس؟", faq_a1:"اشحن بأي من المبالغ QR15، 40، 50، 65، 80، 100، 120، 150، 200، 300 أو 500 ثم اطلب *777*PIN# من هاتفك واختر خيار فلكس. أو اطلب فقط *200*771# للحصول على 150 فلكس مقابل QR20، صالحة لمدة 7 أيام.",
+  faq_q2:"ماذا يحدث إذا طلبت *127*PIN# بدلاً من *777*PIN#؟", faq_a2:"ستحصل على المنفعة العادية غير المرتبطة بفلكس، مثلاً بطاقة QR55 تمنحك QR55 رصيدًا مباشرًا، وليس فلكس.",
+  faq_q3:"ماذا لو لم أختر أي خيار بعد طلب *777*PIN#؟", faq_a3:"لن يحدث شيء. لن تتم عملية الشحن، وعليك المحاولة مرة أخرى.",
+  faq_q4:"هل يُرحَّل رصيد فلكس غير المستخدم؟", faq_a4:"نعم، إذا أعدت الشحن بفلكس قبل انتهاء صلاحية رصيدك الحالي، يُرحَّل المتبقي إلى فترة صلاحية جديدة. الاستثناء الوحيد هو QR10 وQR20، اللتان لا تُرحَّلان أبدًا.",
+  faq_q5:"كيف أتحقق من رصيد فلكس الخاص بي؟", faq_a5:"اطلب *130# من هاتفك، أو تحقق عبر تطبيق My Vodafone.",
+  faq_q6:"إذا كان لدي رصيد بيانات وفلكس وائتمان معًا، أيها يُستخدم أولاً؟", faq_a6:"يُستخدم رصيد البيانات أولاً، ثم فلكس، ثم رصيد الائتمان بالريال أخيرًا.",
+  faq_q7:"هل يمكنني استخدام فلكس أثناء التجوال خارج قطر؟", faq_a7:"لا. يعمل فلكس داخل قطر فقط. ستحتاج إلى باقة تجوال في الخارج.",
+  faq_q8:"كيف ألغي فلكس؟", faq_a8:"اطلب *250*771# أو *100# لإلغاء فلكس والعودة إلى الشحن العادي."
+}
+};
+
+// ── DATA ──────────────────────────────────────────────────────────────
+const PACKS = [
+  {qr:10,  flex:70,   val:'val_3',    carry:false},
+  {qr:15,  flex:110,  val:'val_5act', carry:true},
+  {qr:20,  flex:150,  val:'val_7',    carry:false},
+  {qr:40,  flex:350,  val:'val_14',   carry:true},
+  {qr:50,  flex:450,  val:'val_28',   carry:true},
+  {qr:65,  flex:650,  val:'val_28',   carry:true},
+  {qr:80,  flex:700,  val:'val_28',   carry:true},
+  {qr:100, flex:1100, val:'val_28',   carry:true},
+  {qr:120, flex:1350, val:'val_28',   carry:true},
+  {qr:150, flex:2200, val:'val_28',   carry:true},
+  {qr:200, flex:3300, val:'val_28',   carry:true},
+  {qr:300, flex:3750, val:'val_28',   carry:true},
+  {qr:500, flex:6250, val:'val_28',   carry:true},
+];
+
+// country key → Flex per min
+const COUNTRY_RATES = {
+  c_india:1, c_bangladesh:1,
+  c_pakistan:3, c_philippines:3,
+  c_srilanka:5, c_egypt:5, c_saudi:5, c_uae:5, c_kuwait:5,
+  c_bahrain:5, c_thailand:5, c_uk:5, c_usa:5, c_nepal:5,
+  c_kenya:5, c_nigeria:5, c_malaysia:5, c_indonesia:5,
+  c_turkey:6,
+  c_jordan:10, c_lebanon:10, c_canada:10, c_australia:10, c_germany:10,
+  c_other:10,
+};
+
+const COUNTRY_KEYS = Object.keys(COUNTRY_RATES);
+const DATA_FLEX_PER_GB = 145; // Vodafone doesn't publish exact rate; this is a close estimate
+
+// ── STATE ──────────────────────────────────────────────────────────────
+let currentLang = 'en';
+let selectedFlex = 0;
+let intlRowCount = 0;
+
+// ── HELPERS ────────────────────────────────────────────────────────────
+function t(key){ return (I18N[currentLang] && I18N[currentLang][key]) || (I18N.en[key]) || key; }
+function isRTL(){ return currentLang === 'ar' || currentLang === 'ur'; }
+
+function applyLang(lang){
+  currentLang = lang;
+  document.documentElement.lang = lang;
+  document.body.dataset.lang = lang;
+  document.body.dir = isRTL() ? 'rtl' : 'ltr';
+  // update all static text nodes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    el.textContent = t(el.dataset.i18n);
+  });
+  // re-render dynamic bits
+  renderPackTable();
+  renderPackChips();
+  renderIntlCountrySelects();
+  recalc();
+  // update lang buttons
+  document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.langBtn === lang);
+  });
+}
+
+// ── TICKER BOARD ───────────────────────────────────────────────────────
+const tickerItems = PACKS.map(p => `QR ${p.qr} ⇄ ${p.flex.toLocaleString()} FLEX`);
+let tickIdx = 0;
+function rotateTicker(){
+  const el = document.getElementById('tickerVal');
+  if(!el) return;
+  el.style.opacity = '0';
+  setTimeout(()=>{
+    tickIdx = (tickIdx+1) % tickerItems.length;
+    el.textContent = tickerItems[tickIdx];
+    el.style.opacity = '1';
+  }, 350);
+}
+setInterval(rotateTicker, 2200);
+
+// ── PACK TABLE ─────────────────────────────────────────────────────────
+function renderPackTable(){
+  const body = document.getElementById('packTableBody');
+  if(!body) return;
+  body.innerHTML = PACKS.map(p=>`
+    <tr>
+      <td class="num"><strong>QR ${p.qr}</strong></td>
+      <td class="num">${p.flex.toLocaleString()}</td>
+      <td>${t(p.val)}</td>
+      <td><span class="stamp ${p.carry?'yes':'no'}">${p.carry ? t('carry_yes') : t('carry_no')}</span></td>
+    </tr>`).join('');
+}
+
+// ── PACK CHIPS ─────────────────────────────────────────────────────────
+function renderPackChips(){
+  const row = document.getElementById('packChips');
+  if(!row) return;
+  row.innerHTML = PACKS.map(p=>`
+    <button type="button" class="chip ${selectedFlex===p.flex&&!document.getElementById('customToggle').checked?'selected':''}"
+      data-qr="${p.qr}" data-flex="${p.flex}">
+      QR ${p.qr}
+      <small>${p.flex.toLocaleString()} Flex</small>
+    </button>`).join('');
+  row.querySelectorAll('.chip').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      document.getElementById('customToggle').checked = false;
+      document.getElementById('customFlexInput').disabled = true;
+      selectedFlex = parseInt(btn.dataset.flex);
+      renderPackChips();
+      recalc();
+    });
+  });
+}
+
+// ── CUSTOM FLEX TOGGLE ─────────────────────────────────────────────────
+document.getElementById('customToggle').addEventListener('change', function(){
+  const inp = document.getElementById('customFlexInput');
+  inp.disabled = !this.checked;
+  if(this.checked){
+    selectedFlex = parseInt(inp.value)||0;
+    renderPackChips(); // deselect chips
+  } else {
+    selectedFlex = 0;
+    renderPackChips();
+  }
+  recalc();
+});
+document.getElementById('customFlexInput').addEventListener('input', function(){
+  if(document.getElementById('customToggle').checked){
+    selectedFlex = parseInt(this.value)||0;
+    recalc();
+  }
+});
+
+// ── INTERNATIONAL ROWS ─────────────────────────────────────────────────
+function countryOptions(selectedKey='c_india'){
+  return COUNTRY_KEYS.map(k=>`<option value="${k}" ${k===selectedKey?'selected':''}>${t(k)}</option>`).join('');
+}
+
+function addIntlRow(countryKey='c_india', mins=0){
+  const container = document.getElementById('intlRows');
+  const id = ++intlRowCount;
+  const div = document.createElement('div');
+  div.className = 'intlrow';
+  div.id = `irow_${id}`;
+  div.innerHTML = `
+    <select id="icountry_${id}" aria-label="Country">${countryOptions(countryKey)}</select>
+    <input type="number" id="imins_${id}" min="0" value="${mins}" aria-label="Minutes">
+    <button type="button" class="addrow" onclick="removeIntlRow(${id})">${t('intlRemoveLabel')}</button>
+  `;
+  container.appendChild(div);
+  div.querySelector('select').addEventListener('change', recalc);
+  div.querySelector('input').addEventListener('input', recalc);
+  recalc();
+}
+
+function removeIntlRow(id){
+  const el = document.getElementById(`irow_${id}`);
+  if(el) el.remove();
+  recalc();
+}
+
+function renderIntlCountrySelects(){
+  document.querySelectorAll('.intlrow select').forEach(sel=>{
+    const val = sel.value;
+    sel.innerHTML = countryOptions(val);
+  });
+  document.querySelectorAll('.intlrow button').forEach(btn=>{
+    if(btn.textContent !== t('calc_addcountry')) btn.textContent = t('intlRemoveLabel');
+  });
+}
+
+document.getElementById('addIntlRow').addEventListener('click', ()=> addIntlRow());
+
+// ── RECALC ─────────────────────────────────────────────────────────────
+['inMinutes','inSms','inData'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', recalc);
+});
+
+function recalc(){
+  const balance = selectedFlex;
+  const mins   = parseFloat(document.getElementById('inMinutes').value)||0;
+  const sms    = parseFloat(document.getElementById('inSms').value)||0;
+  const dataGB = parseFloat(document.getElementById('inData').value)||0;
+
+  // international calls
+  let intlFlex = 0;
+  document.querySelectorAll('.intlrow').forEach(row=>{
+    const sel = row.querySelector('select');
+    const inp = row.querySelector('input');
+    if(!sel||!inp) return;
+    const rate = COUNTRY_RATES[sel.value] || 5;
+    const m = parseFloat(inp.value)||0;
+    intlFlex += m * rate;
+  });
+
+  const minCost  = mins * 1;
+  const smsCost  = sms  * 1;
+  const dataCost = Math.round(dataGB * DATA_FLEX_PER_GB);
+  const needed   = minCost + smsCost + dataCost + intlFlex;
+
+  // update ledger display
+  document.getElementById('outBalance').textContent  = balance.toLocaleString();
+  document.getElementById('outMinCost').textContent  = `−${Math.round(minCost).toLocaleString()}`;
+  document.getElementById('outSmsCost').textContent  = `−${Math.round(smsCost).toLocaleString()}`;
+  document.getElementById('outDataCost').textContent = `−${Math.round(dataCost).toLocaleString()}`;
+  document.getElementById('outIntlCost').textContent = `−${Math.round(intlFlex).toLocaleString()}`;
+  document.getElementById('outNeeded').textContent   = Math.round(needed).toLocaleString();
+
+  // verdict
+  const box = document.getElementById('verdictBox');
+  if(balance === 0 && needed === 0){
+    box.innerHTML = `<div class="verdict ok" style="opacity:.6">${t('pick_prompt')}</div>`;
+    return;
+  }
+  const left = balance - needed;
+  if(left >= 0){
+    box.innerHTML = `<div class="verdict ok">${t('verdict_ok').replace('{left}', Math.round(left).toLocaleString())}</div>`;
+  } else {
+    const short = Math.abs(left);
+    const upgr = PACKS.find(p => p.flex >= needed);
+    if(upgr){
+      const msg = t('verdict_bad')
+        .replace('{short}', Math.round(short).toLocaleString())
+        .replace('{pack}', upgr.qr)
+        .replace('{flex}', upgr.flex.toLocaleString());
+      box.innerHTML = `<div class="verdict bad">${msg}</div>`;
+    } else {
+      box.innerHTML = `<div class="verdict bad">${t('verdict_bad_none')}</div>`;
+    }
+  }
+}
+
+// ── FAQ ────────────────────────────────────────────────────────────────
+function buildFAQ(){
+  const list = document.getElementById('faqList');
+  const keys = [1,2,3,4,5,6,7,8];
+  list.innerHTML = keys.map(n=>`
+    <div class="faqitem" id="faq_${n}">
+      <button class="faqq" onclick="toggleFaq(${n})">
+        <span>${t('faq_q'+n)}</span>
+        <span class="plus">+</span>
+      </button>
+      <div class="faqa"><div class="inner">${t('faq_a'+n)}</div></div>
+    </div>`).join('');
+}
+
+function toggleFaq(n){
+  const item = document.getElementById('faq_'+n);
+  item.classList.toggle('open');
+  item.querySelector('.plus').textContent = item.classList.contains('open') ? '−' : '+';
+}
+
+// patch applyLang to also rebuild FAQ
+const _applyLangOrig = applyLang;
+function applyLangFull(lang){
+  _applyLangOrig(lang);
+  buildFAQ();
+}
+
+// ── LANG BUTTONS ───────────────────────────────────────────────────────
+document.querySelectorAll('[data-lang-btn]').forEach(btn=>{
+  btn.addEventListener('click', ()=> applyLangFull(btn.dataset.langBtn));
+});
+
+// ── INIT ───────────────────────────────────────────────────────────────
+renderPackTable();
+renderPackChips();
+addIntlRow('c_india', 0);
+buildFAQ();
+recalc();
+
+</script>
+</body>
+</html>
